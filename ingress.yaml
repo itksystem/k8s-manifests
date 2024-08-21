@@ -1,19 +1,30 @@
 apiVersion: networking.k8s.io/v1
-kind: Ingress  
+kind: Ingress
 metadata:
   name: health-check-ingress
+  namespace: default
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /health
 spec:
+  ingressClassName: nginx
   rules:
-  - host: arch.homework
-    http:
-      paths:
-      - path: /otus/sinyagindv/health
-        pathType: Prefix
-        backend:
-          service:
-            name: health-check-service
-            port:
-              number: 80
-              number: 80
+    - host: arch.homework
+      http:
+        paths:
+          # Перенаправление /otus/sinyagindv/health на /health
+          - path: /otus/sinyagindv/health
+            pathType: Prefix
+            backend:
+              service:
+                name: health-check-service
+                port:
+                  number: 80
+
+          # Все остальные запросы перенаправляются на /
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: health-check-service
+                port:
+                  number: 80
