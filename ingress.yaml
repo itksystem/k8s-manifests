@@ -4,13 +4,22 @@ metadata:
   name: health-check-ingress
   namespace: default
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /health
+#    nginx.ingress.kubernetes.io/use-regex: "true"  # Разрешаем использовать регулярные выражения в путях
+    nginx.ingress.kubernetes.io/rewrite-target: /health  # Переписываем путь для правильного направления трафика
 spec:
   ingressClassName: nginx
   rules:
     - host: arch.homework
       http:
         paths:
+          # Маршрутизация для "/health"
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: health-check-service
+                port:
+                  number: 80
           # Перенаправление /otus/sinyagindv/health на /health
           - path: /otus/sinyagindv/health
             pathType: Prefix
@@ -18,13 +27,5 @@ spec:
               service:
                 name: health-check-service
                 port:
-                  number: 80
-
-          # Все остальные запросы перенаправляются на /
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: health-check-service
-                port:
-                  number: 80
+                  number: 80              
+  
