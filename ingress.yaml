@@ -28,4 +28,3 @@ spec:
                 name: health-check-service
                 port:
                   number: 80              
-  
